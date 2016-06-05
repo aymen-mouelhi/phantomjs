@@ -485,6 +485,8 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, const QVariant& 
     data["redirectURL"] = reply->header(QNetworkRequest::LocationHeader);
     data["headers"] = headers;
     data["time"] = QDateTime::currentDateTime();
+    data["body"] = content.toBase64().data();
+    data["bodySize"] = content.size();
 
     m_ids.remove(reply);
     m_started.remove(reply);
