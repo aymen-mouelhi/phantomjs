@@ -488,6 +488,9 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, int requestId, i
     QVariantList headers = getHeadersFromReply(reply);
 
     QVariantMap data;
+    QByteArray bytes = reply->readAll();
+    QString content = QString::fromUtf8(bytes.data(), bytes.size());
+
     data["stage"] = "end";
     data["id"] = requestId;
     data["url"] = reply->url().toEncoded().data();
@@ -498,7 +501,7 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, int requestId, i
     data["headers"] = headers;
     data["time"] = QDateTime::currentDateTime();
     // data["body"] = body;
-    data["body"] = reply->readAll();
+    data["body"] = content;
     data["bodySize"] = body.length();
 
     emit resourceReceived(data);
