@@ -432,7 +432,7 @@ bool NetworkAccessManager::shouldCaptureResponse(const QString& url)
         }
     }
 
-    return false;
+    return true;
 }
 
 void NetworkAccessManager::handleTimeout()
@@ -497,7 +497,8 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, int requestId, i
     data["redirectURL"] = reply->header(QNetworkRequest::LocationHeader);
     data["headers"] = headers;
     data["time"] = QDateTime::currentDateTime();
-    data["body"] = body;
+    // data["body"] = body;
+    data["body"] = reply->readAll();
     data["bodySize"] = body.length();
 
     emit resourceReceived(data);
