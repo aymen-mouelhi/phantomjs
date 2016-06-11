@@ -75,6 +75,12 @@ static const char* toString(QNetworkAccessManager::Operation op)
     return str;
 }
 
+QString base64_encode(QString string){
+    QByteArray ba;
+    ba.append(string);
+    return ba.toBase64();
+}
+
 // Stub QNetworkReply used when file:/// URLs are disabled.
 // Somewhat cargo-culted from QDisabledNetworkReply.
 
@@ -500,8 +506,9 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, int requestId, i
     data["redirectURL"] = reply->header(QNetworkRequest::LocationHeader);
     data["headers"] = headers;
     data["time"] = QDateTime::currentDateTime();
-    // data["body"] = body;
+    data["body64"] = base64_encode(body);
     data["body"] = content;
+    data["body_bytes"] = reply->readAll();
     data["bodySize"] = body.length();
 
     emit resourceReceived(data);
