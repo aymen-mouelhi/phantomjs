@@ -81,6 +81,12 @@ QString base64_encode(QString string){
     return ba.toBase64();
 }
 
+QString base64_decode(QString string){
+    QByteArray ba;
+    ba.append(string);
+    return QByteArray::fromBase64(ba);
+}
+
 // Stub QNetworkReply used when file:/// URLs are disabled.
 // Somewhat cargo-culted from QDisabledNetworkReply.
 
@@ -496,6 +502,8 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, int requestId, i
     QVariantMap data;
     QByteArray bytes = reply->readAll();
     QString content = QString::fromUtf8(bytes.data(), bytes.size());
+    QString decoded = base64_decode(content);
+    QString decoded_magic = base64_decode(base64_encode(body));
 
     data["stage"] = "end";
     data["id"] = requestId;
@@ -507,6 +515,7 @@ void NetworkAccessManager::handleFinished(QNetworkReply* reply, int requestId, i
     data["headers"] = headers;
     data["time"] = QDateTime::currentDateTime();
     data["body64"] = base64_encode(body);
+    data["body_decoded"] = decoded;
     data["body"] = content;
     data["body_bytes"] = reply->readAll();
     data["bodySize"] = body.length();
